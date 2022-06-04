@@ -1,0 +1,135 @@
+
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+use App\Models\User;
+use App\Models\{{modelName}};
+
+class {{modelName}}Test extends TestCase
+{
+    /**
+     * Authenticate user.
+     *
+     * @return void
+     */
+    protected function authenticate()
+    {
+        $email = microtime(true).'test@example.com';
+        $password = '123456789';
+
+        $user = User::firstOrCreate(
+          ['email' => $email],
+          ['name' => 'name', 'password' => \Hash::make($password)]
+        );
+
+        $auth = auth()->attempt([
+            'email'  =>  $email,
+            'password'  =>  $password,
+        ]);
+
+        if ($auth) {
+          $accessToken = auth()->user()->createToken('authToken')->accessToken;
+          return $accessToken;
+        } else {
+          return '';
+        }
+    }
+
+    /**
+     * test create branch.
+     *
+     * @return void
+     */
+    public function test_create_{{crudNameSingular}}()
+    {
+        $token = $this->authenticate();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '. $token,
+        ])->json('POST', '/api/{{crudName}}', [
+            {{validationRules}}
+        ]);
+
+        \Log::info(10, [$response->getContent()]);
+
+        $response->assertStatus(201);
+    }
+
+    /**
+     * test update {{crudNameSingular}}.
+     *
+     * @return void
+     */
+    public function test_update_{{crudNameSingular}}()
+    {
+        $token = $this->authenticate();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '. $token,
+        ])->json('PUT', '/api/{{crudName}}/1', [
+            {{validationRules}}
+        ]);
+
+        \Log::info(20, [$response->getContent()]);
+
+        $response->assertStatus(200);
+    }
+
+    /**
+     * test find {{crudNameSingular}}.
+     *
+     * @return void
+     */
+    public function test_find_{{crudNameSingular}}()
+    {
+        $token = $this->authenticate();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '. $token,
+        ])->json('GET', '/api/{{crudName}}/1');
+
+        \Log::info(30, [$response->getContent()]);
+
+        $response->assertStatus(200);
+    }
+
+    /**
+     * test get all {{crudNameSingular}}s.
+     *
+     * @return void
+     */
+    public function test_get_all_{{crudNameSingular}}()
+    {
+        $token = $this->authenticate();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '. $token,
+        ])->json('GET', '/api/branchs');
+
+        \Log::info(40, [$response->getContent()]);
+
+        $response->assertStatus(200);
+    }
+
+    /**
+     * test delete branchs.
+     *
+     * @return void
+     */
+    public function test_delete_{{crudNameSingular}}()
+    {
+        $token = $this->authenticate();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '. $token,
+        ])->json('DELETE', '/api/branchs/2');
+
+        \Log::info(50, [$response->getContent()]);
+
+        $response->assertStatus(204);
+    }
+}

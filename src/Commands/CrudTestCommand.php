@@ -5,14 +5,16 @@ namespace Appzcoder\CrudGenerator\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 
-class CrudApiControllerCommand extends GeneratorCommand
+use Illuminate\Foundation\Console\TestMakeCommand;
+
+class CrudTestCommand extends TestMakeCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'crud:api-controller
+    protected $signature = 'crud:test
                             {name : The name of the controler.}
                             {--crud-name= : The name of the Crud.}
                             {--model-name= : The name of the Model.}
@@ -34,7 +36,7 @@ class CrudApiControllerCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $type = 'Controller';
+    protected $type = 'Test';
 
     /**
      * Get the stub file for the generator.
@@ -44,8 +46,8 @@ class CrudApiControllerCommand extends GeneratorCommand
     protected function getStub()
     {
         return config('crudgenerator.custom_template')
-        ? config('crudgenerator.path') . '/api-controller.stub'
-        : __DIR__ . '/../stubs/api-controller.stub';
+        ? config('crudgenerator.path') . '/test.stub'
+        : __DIR__ . '/../stubs/test.stub';
     }
 
     /**
@@ -57,7 +59,7 @@ class CrudApiControllerCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\\' . ($this->option('controller-namespace') ? $this->option('controller-namespace') : 'Http\Controllers');
+        return $rootNamespace . '\\Feature';
     }
 
     /**
@@ -94,7 +96,7 @@ class CrudApiControllerCommand extends GeneratorCommand
 
         $validationRules = '';
         if (trim($validations) != '') {
-            $validationRules = "\$this->validate(\$request, [";
+            $validationRules = "";
 
             $rules = explode(';', $validations);
             foreach ($rules as $v) {
@@ -106,11 +108,10 @@ class CrudApiControllerCommand extends GeneratorCommand
                 $parts = explode('#', $v);
                 $fieldName = trim($parts[0]);
                 $rules = trim($parts[1]);
-                $validationRules .= "\n\t\t\t\t\t\t'$fieldName' => '$rules',";
+                $validationRules .= "'$fieldName' => '$rules',\n\t\t\t\t\t\t";
             }
 
-            $validationRules = substr($validationRules, 0, -1); // lose the last comma
-            $validationRules .= "\n\t\t\t\t]);";
+            $validationRules = substr($validationRules, 0, -7); // lose the last comma
         }
 
         return $this->replaceNamespace($stub, $name)
