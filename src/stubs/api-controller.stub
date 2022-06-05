@@ -17,6 +17,7 @@ class DummyClass extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('index', {{modelName}}::class);
         ${{crudName}} = {{modelName}}::latest()->paginate({{pagination}});
 
         return ${{crudName}};
@@ -31,6 +32,7 @@ class DummyClass extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store', {{modelName}}::class);
         {{validationRules}}
         ${{crudNameSingular}} = {{modelName}}::create($request->all());
 
@@ -44,9 +46,9 @@ class DummyClass extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show({{modelName}} ${{crudNameSingular}})
     {
-        ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
+        $this->authorize('show', ${{crudNameSingular}});
 
         return ${{crudNameSingular}};
     }
@@ -59,10 +61,10 @@ class DummyClass extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, {{modelName}} ${{crudNameSingular}})
     {
+        $this->authorize('update', ${{crudNameSingular}});
         {{validationRules}}
-        ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
         ${{crudNameSingular}}->update($request->all());
 
         return response()->json(${{crudNameSingular}}, 200);
@@ -75,9 +77,10 @@ class DummyClass extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy({{modelName}} ${{crudNameSingular}})
     {
-        {{modelName}}::destroy($id);
+        $this->authorize('destroy', ${{crudNameSingular}});
+        ${{crudNameSingular}}->delete();
 
         return response()->json(null, 204);
     }

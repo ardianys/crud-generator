@@ -1,4 +1,3 @@
-
 <?php
 
 namespace Tests\Feature;
@@ -66,17 +65,18 @@ class {{modelName}}Test extends TestCase
      */
     public function test_update_{{crudNameSingular}}()
     {
-        $token = $this->authenticate();
-
+      $token = $this->authenticate();
+      if (${{crudNameSingular}}->id) {
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '. $token,
-        ])->json('PUT', '/api/{{crudName}}/1', [
+        ])->json('PUT', '/api/{{crudName}}/' . ${{crudNameSingular}}->id, [
             {{validationRules}}
         ]);
 
         \Log::info(20, [$response->getContent()]);
 
         $response->assertStatus(200);
+      }
     }
 
     /**
@@ -86,15 +86,16 @@ class {{modelName}}Test extends TestCase
      */
     public function test_find_{{crudNameSingular}}()
     {
-        $token = $this->authenticate();
-
+      $token = $this->authenticate();
+      if (${{crudNameSingular}}->id) {
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '. $token,
-        ])->json('GET', '/api/{{crudName}}/1');
+        ])->json('GET', '/api/{{crudName}}/ . ${{crudNameSingular}}->id);
 
         \Log::info(30, [$response->getContent()]);
 
         $response->assertStatus(200);
+      }
     }
 
     /**
@@ -122,14 +123,15 @@ class {{modelName}}Test extends TestCase
      */
     public function test_delete_{{crudNameSingular}}()
     {
-        $token = $this->authenticate();
-
+      $token = $this->authenticate();
+      if (${{crudNameSingular}}->id) {
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '. $token,
-        ])->json('DELETE', '/api/branchs/2');
+        ])->json('DELETE', '/api/branchs/' . ${{crudNameSingular}}->id);
 
         \Log::info(50, [$response->getContent()]);
 
         $response->assertStatus(204);
+      }
     }
 }
