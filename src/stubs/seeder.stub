@@ -1,0 +1,26 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use App\Models\{{modelName}};
+
+class {{modelName}}Seeder extends DatabaseSeeder
+{
+    /**
+     * Seed the {{modelName}}'s table.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $file = base_path() . "/database/seeders/csv/{{crudName}}.csv";
+        $records = DatabaseSeeder::import_csv($file);
+        foreach ($records as $key => $record) {
+          {{modelName}}::create([
+            {{data}}
+          ]);
+        }
+    }
+}

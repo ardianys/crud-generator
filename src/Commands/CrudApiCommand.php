@@ -122,6 +122,7 @@ class CrudApiCommand extends Command
         $this->call('crud:model',          ['name' => $modelNamespace . $modelName, '--fillable' => $fillable, '--table' => $tableName, '--pk' => $primaryKey, '--relationships' => $relationships, '--soft-deletes' => $softDeletes]);
         $this->call('crud:migration',      ['name' => $migrationName, '--schema' => $migrationFields, '--pk' => $primaryKey, '--indexes' => $indexes, '--foreign-keys' => $foreignKeys, '--soft-deletes' => $softDeletes]);
         $this->call('crud:observer',       ['name' => $modelName . 'Observer', '--crud-name' => $name, '--model-name' => $modelName, '--pagination' => $perPage, '--validations' => $validations]);
+        $this->call('crud:seeder',         ['name' => $modelName . 'Seeder', '--crud-name' => $name, '--model-name' => $modelName, '--pagination' => $perPage, '--validations' => $validations]);
 
         // For optimizing the class loader
         if (\App::VERSION() < '5.6') {
