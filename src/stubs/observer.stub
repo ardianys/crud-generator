@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Observers;
+
+use App\Models\{{modelName}};
+
+class {{modelName}}Observer
+{
+    /**
+     * Handle events after all transactions are committed.
+     *
+     * @var bool
+     */
+    public $afterCommit = true;
+
+    /**
+     * Handle the {{modelName}} "created" event.
+     *
+     * @param  \App\Models\{{modelName}}  ${{crudNameSingular}}
+     * @return void
+     */
+    public function created({{modelName}} ${{crudNameSingular}})
+    {
+        // \Log::info('created', [${{crudNameSingular}}]);
+    }
+
+    /**
+     * Handle the {{modelName}} "updated" event.
+     *
+     * @param  \App\Models\{{modelName}}  ${{crudNameSingular}}
+     * @return void
+     */
+    public function updated({{modelName}} ${{crudNameSingular}})
+    {
+        // \Log::info('updated', [${{crudNameSingular}}]);
+    }
+
+    /**
+     * Handle the {{modelName}} "deleted" event.
+     *
+     * @param  \App\Models\{{modelName}}  ${{crudNameSingular}}
+     * @return void
+     */
+    public function deleted({{modelName}} ${{crudNameSingular}})
+    {
+        // \Log::info('deleted', [${{crudNameSingular}}]);
+    }
+
+    /**
+     * Handle the {{modelName}} "restored" event.
+     *
+     * @param  \App\Models\{{modelName}}  ${{crudNameSingular}}
+     * @return void
+     */
+    public function restored({{modelName}} ${{crudNameSingular}})
+    {
+        // \Log::info('restored', [${{crudNameSingular}}]);
+    }
+
+    /**
+     * Handle the {{modelName}} "forceDeleted" event.
+     *
+     * @param  \App\Models\{{modelName}}  ${{crudNameSingular}}
+     * @return void
+     */
+    public function forceDeleted({{modelName}} ${{crudNameSingular}})
+    {
+        // \Log::info('forceDeleted', [${{crudNameSingular}}]);
+    }
+}
