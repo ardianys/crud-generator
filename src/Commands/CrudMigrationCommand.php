@@ -61,6 +61,7 @@ class CrudMigrationCommand extends GeneratorCommand
         'double' => 'double',
         'float' => 'float',
         'enum' => 'enum',
+        'foreignId' => 'foreignId',
     ];
 
     /**
@@ -233,10 +234,10 @@ class CrudMigrationCommand extends GeneratorCommand
 
         $schemaUp =
             "Schema::create('" . $tableName . "', function (Blueprint \$table) {
-            \$table->increments('" . $primaryKey . "');
-            \$table->timestamps();\n" . $tabIndent . $tabIndent . $tabIndent .
-            $softDeletesSnippets .
+            \$table->id();\n" . $tabIndent . $tabIndent . $tabIndent .
             $schemaFields .
+            "\$table->timestamps();\n" . $tabIndent . $tabIndent . $tabIndent .
+            $softDeletesSnippets .
         "});";
 
         $schemaDown = "Schema::drop('" . $tableName . "');";
