@@ -87,16 +87,27 @@ class CrudCsvCommand extends GeneratorCommand
             $x = 0;
             foreach ($fields as $field) {
                 $fieldArray = explode('#', $field);
+                // var_dump($fieldArray);
                 $data[$x]['name'] = trim($fieldArray[0]);
                 $data[$x]['type'] = trim($fieldArray[1]);
+                $modifier = trim($fieldArray[2]);
+                if ($modifier === 'unique') {
+                    $datePrefix = date('Y_m_d_His');
+                }
 
 
                 $header .= $data[$x]['name'] . ',';
 
                 if ($data[$x]['type'] === 'foreignId') {
                     $body   .= '1,';
+                } elseif ($data[$x]['type'] === 'date') {
+                    $body   .= '2022-10-10 00:00:00,';
                 } elseif ($data[$x]['type'] === 'datetime') {
                     $body   .= '2022-10-10 10:10:10,';
+                } elseif ($data[$x]['type'] === 'integer') {
+                    $body   .= '20,';
+                } elseif ($data[$x]['type'] === 'boolean') {
+                    $body   .= 'true,';
                 } else {
                     $body   .= $data[$x]['name'] . ',';
                 }
@@ -107,16 +118,13 @@ class CrudCsvCommand extends GeneratorCommand
             }
         }
 
-        var_dump($body);
         $body = substr($body, 0, -1);
         $body_copy = substr($body, 1, strlen($body));
         for ($i=2; $i < 100; $i++) {
           $body = $body . "\n" . $i . $body_copy;
         }
-        var_dump($body);
 
         $header = substr($header, 0, -1); // lose the last comma
-
 
         return $this->replaceSchemaUp($stub, $header)
             ->replaceSchemaDown($stub, $body)

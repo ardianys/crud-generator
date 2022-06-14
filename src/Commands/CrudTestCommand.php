@@ -16,6 +16,7 @@ class CrudTestCommand extends TestMakeCommand
      */
     protected $signature = 'crud:test
                             {name : The name of the controler.}
+                            {--schema= : The name of the Crud.}
                             {--crud-name= : The name of the Crud.}
                             {--model-name= : The name of the Model.}
                             {--model-namespace= : The namespace of the Model.}
@@ -94,12 +95,13 @@ class CrudTestCommand extends TestMakeCommand
         $perPage = intval($this->option('pagination'));
         $validations = rtrim($this->option('validations'), ';');
 
+        $schema = rtrim($this->option('schema'), ';');
+        $fields = explode(';', $schema);
         $validationRules = '';
-        if (trim($validations) != '') {
+
             $validationRules = "";
 
-            $rules = explode(';', $validations);
-            foreach ($rules as $v) {
+            foreach ($fields as $v) {
                 if (trim($v) == '') {
                     continue;
                 }
@@ -108,11 +110,25 @@ class CrudTestCommand extends TestMakeCommand
                 $parts = explode('#', $v);
                 $fieldName = trim($parts[0]);
                 $rules = trim($parts[1]);
-                $validationRules .= "'$fieldName' => '$rules',\n\t\t\t\t\t\t";
+
+                if ($rules === 'foreignId') {
+                    $validationRules .= "'$fieldName' => 1,\n\t\t\t\t\t\t";
+                  } elseif ($rules === 'date') {
+                    $validationRules .= "'$fieldName' => '2022-10-10 00:00:00',\n\t\t\t\t\t\t";
+                  } elseif ($rules === 'datetime') {
+                    $validationRules .= "'$fieldName' => '2022-10-10 00:00:00',\n\t\t\t\t\t\t";
+                  } elseif ($rules === 'integer') {
+                    $validationRules .= "'$fieldName' => 1,\n\t\t\t\t\t\t";
+                  } elseif ($rules === 'boolean') {
+                    $validationRules .= "'$fieldName' => true,\n\t\t\t\t\t\t";
+                } else {
+                    $validationRules .= "'$fieldName' => '$rules',\n\t\t\t\t\t\t";
+                }
+
+
             }
 
             $validationRules = substr($validationRules, 0, -7); // lose the last comma
-        }
 
         return $this->replaceNamespace($stub, $name)
             ->replaceCrudName($stub, $crudName)

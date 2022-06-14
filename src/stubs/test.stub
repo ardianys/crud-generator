@@ -8,7 +8,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\{{modelName}};
 
-class {{modelName}}Test extends TestCase
+class {{crudName}}Test extends TestCase
 {
     /**
      * Authenticate user.
@@ -66,6 +66,7 @@ class {{modelName}}Test extends TestCase
     public function test_update_{{crudNameSingular}}()
     {
       $token = $this->authenticate();
+      ${{crudNameSingular}} = {{modelName}}::all()->last();
       if (${{crudNameSingular}}->id) {
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '. $token,
@@ -87,10 +88,11 @@ class {{modelName}}Test extends TestCase
     public function test_find_{{crudNameSingular}}()
     {
       $token = $this->authenticate();
+      ${{crudNameSingular}} = {{modelName}}::all()->last();
       if (${{crudNameSingular}}->id) {
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '. $token,
-        ])->json('GET', '/api/{{crudName}}/ . ${{crudNameSingular}}->id);
+        ])->json('GET', '/api/{{crudName}}/' . ${{crudNameSingular}}->id);
 
         \Log::info(30, [$response->getContent()]);
 
@@ -109,7 +111,7 @@ class {{modelName}}Test extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '. $token,
-        ])->json('GET', '/api/branchs');
+        ])->json('GET', '/api/{{crudName}}');
 
         \Log::info(40, [$response->getContent()]);
 
@@ -117,17 +119,18 @@ class {{modelName}}Test extends TestCase
     }
 
     /**
-     * test delete branchs.
+     * test delete {{crudName}}.
      *
      * @return void
      */
     public function test_delete_{{crudNameSingular}}()
     {
       $token = $this->authenticate();
+      ${{crudNameSingular}} = {{modelName}}::all()->last();
       if (${{crudNameSingular}}->id) {
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '. $token,
-        ])->json('DELETE', '/api/branchs/' . ${{crudNameSingular}}->id);
+        ])->json('DELETE', '/api/{{crudName}}/' . ${{crudNameSingular}}->id);
 
         \Log::info(50, [$response->getContent()]);
 
