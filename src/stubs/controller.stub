@@ -26,7 +26,7 @@ class DummyClass extends Controller
             ${{crudName}} = {{modelName}}::latest()->paginate($perPage);
         }
 
-        return view('{{viewPath}}{{viewName}}.index', compact('{{crudName}}'));
+        return new {{modelName}}Collection(${{crudName}});
     }
 
     /**
@@ -67,7 +67,7 @@ class DummyClass extends Controller
     {
         ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
 
-        return view('{{viewPath}}{{viewName}}.show', compact('{{crudNameSingular}}'));
+        return new {{modelName}}Resource(${{crudNameSingular}});
     }
 
     /**

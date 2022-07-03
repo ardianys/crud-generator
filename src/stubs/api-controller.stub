@@ -2,11 +2,12 @@
 
 namespace DummyNamespace;
 
+use Illuminate\Http\Request;
 use DummyRootNamespaceHttp\Requests;
 use DummyRootNamespaceHttp\Controllers\Controller;
-
+use DummyRootNamespaceHttp\Resources\{{modelName}}Resource;
+use DummyRootNamespaceHttp\Resources\{{modelName}}Collection;
 use DummyRootNamespace{{modelNamespace}}{{modelName}};
-use Illuminate\Http\Request;
 
 class DummyClass extends Controller
 {
@@ -18,9 +19,16 @@ class DummyClass extends Controller
     public function index(Request $request)
     {
         $this->authorize('index', {{modelName}}::class);
-        ${{crudName}} = {{modelName}}::latest()->paginate({{pagination}});
+        $keyword = $request->get('search');
+        $perPage = {{pagination}};
 
-        return ${{crudName}};
+        if (!empty($keyword)) {
+            ${{crudName}} = {{modelName}}::{{whereSnippet}}latest()->paginate($perPage);
+        } else {
+            ${{crudName}} = {{modelName}}::latest()->paginate($perPage);
+        }
+
+        return new {{modelName}}Collection(${{crudName}});
     }
 
     /**
@@ -49,8 +57,7 @@ class DummyClass extends Controller
     public function show({{modelName}} ${{crudNameSingular}})
     {
         $this->authorize('show', ${{crudNameSingular}});
-
-        return ${{crudNameSingular}};
+        return new {{modelName}}Resource(${{crudNameSingular}});
     }
 
     /**

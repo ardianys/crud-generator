@@ -53,7 +53,9 @@ class CrudGeneratorServiceProvider extends ServiceProvider
             'Appzcoder\CrudGenerator\Commands\CrudObserverCommand',
             'Appzcoder\CrudGenerator\Commands\CrudSeederCommand',
             'Appzcoder\CrudGenerator\Commands\CrudCsvCommand',
-            'Appzcoder\CrudGenerator\Commands\CrudPolicyCommand'
+            'Appzcoder\CrudGenerator\Commands\CrudPolicyCommand',
+            'Appzcoder\CrudGenerator\Commands\CrudResourceCommand',
+            'Appzcoder\CrudGenerator\Commands\CrudCollectionCommand',
         );
     }
 }

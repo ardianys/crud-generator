@@ -5,14 +5,14 @@ namespace Appzcoder\CrudGenerator\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 
-class CrudApiControllerCommand extends GeneratorCommand
+class CrudResourceCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'crud:api-controller
+    protected $signature = 'crud:resource
                             {name : The name of the controler.}
                             {--crud-name= : The name of the Crud.}
                             {--model-name= : The name of the Model.}
@@ -20,7 +20,7 @@ class CrudApiControllerCommand extends GeneratorCommand
                             {--controller-namespace= : Namespace of the controller.}
                             {--validations= : Validation rules for the fields.}
                             {--pagination=25 : The amount of models per page for index pages.}
-                            {--fields : Overwrite already existing controller.}
+                            {--relationships : Overwrite already existing controller.}
                             {--force : Overwrite already existing controller.}';
 
     /**
@@ -35,7 +35,7 @@ class CrudApiControllerCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $type = 'Controller';
+    protected $type = 'Resource';
 
     /**
      * Get the stub file for the generator.
@@ -44,9 +44,7 @@ class CrudApiControllerCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return config('crudgenerator.custom_template')
-        ? config('crudgenerator.path') . '/api-controller.stub'
-        : __DIR__ . '/../stubs/api-controller.stub';
+        return __DIR__ . '/../stubs/resource.stub';
     }
 
     /**
@@ -58,7 +56,8 @@ class CrudApiControllerCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\\' . ($this->option('controller-namespace') ? $this->option('controller-namespace') : 'Http\Controllers');
+        return $rootNamespace . '\\' .  'Http/Resources';
+
     }
 
     /**
@@ -92,11 +91,12 @@ class CrudApiControllerCommand extends GeneratorCommand
         $modelNamespace = $this->option('model-namespace');
         $perPage = intval($this->option('pagination'));
         $validations = rtrim($this->option('validations'), ';');
-        $fields = $this->option('fields');
+        $relationships = trim($this->option('relationships')) != '' ? explode(';', trim($this->option('relationships'))) : [];
 
         $validationRules = '';
         if (trim($validations) != '') {
-            $validationRules = "\$this->validate(\$request, [";
+            $validationRules = "return [";
+            $validationRules .= "\n\t\t\t\t\t\t'id' => \$this->id,";
 
             $rules = explode(';', $validations);
             foreach ($rules as $v) {
@@ -108,33 +108,33 @@ class CrudApiControllerCommand extends GeneratorCommand
                 $parts = explode('#', $v);
                 $fieldName = trim($parts[0]);
                 $rules = trim($parts[1]);
-                $validationRules .= "\n\t\t\t\t\t\t'$fieldName' => '$rules',";
-            }
-
-            $validationRules = substr($validationRules, 0, -1); // lose the last comma
-            $validationRules .= "\n\t\t\t\t]);";
-        }
-
-        $fieldsArray = explode(';', $fields);
-        $fileSnippet = '';
-        $whereSnippet = '';
-
-        if ($fields) {
-            $x = 0;
-            foreach ($fieldsArray as $index => $item) {
-                $itemArray = explode('#', $item);
-
-                if (trim($itemArray[1]) == 'file') {
-                    $fileSnippet .= str_replace('{{fieldName}}', trim($itemArray[0]), $snippet) . "\n";
+                if (substr($fieldName, -3) != '_id') {
+                  $validationRules .= "\n\t\t\t\t\t\t'$fieldName' => \$this->$fieldName,";
                 }
-
-                $fieldName = trim($itemArray[0]);
-
-                $whereSnippet .= ($index == 0) ? "where('$fieldName', 'LIKE', \"%\$keyword%\")" . "\n                " : "->orWhere('$fieldName', 'LIKE', \"%\$keyword%\")" . "\n                ";
             }
 
-            $whereSnippet .= "->";
+
+
+            foreach ($relationships as $rel) {
+                // relationshipname#relationshiptype#args_separated_by_pipes
+                // e.g. employees#hasMany#App\Employee|id|dept_id
+                // user is responsible for ensuring these relationships are valid
+                $parts = explode('#', $rel);
+
+                if (count($parts) != 3) {
+                    continue;
+                }
+                $validationRules .= "\n\t\t\t\t\t\t'$parts[0]' => \$this->$parts[0],";
+
+            }
+
+
+            // $validationRules = substr($validationRules, 0, -1); // lose the last comma
+            $validationRules .= "\n\t\t\t\t];";
         }
+
+
+
 
         return $this->replaceNamespace($stub, $name)
             ->replaceCrudName($stub, $crudName)
@@ -144,7 +144,6 @@ class CrudApiControllerCommand extends GeneratorCommand
             ->replaceModelNamespaceSegments($stub, $modelNamespace)
             ->replaceValidationRules($stub, $validationRules)
             ->replacePaginationNumber($stub, $perPage)
-            ->replaceWhereSnippet($stub, $whereSnippet)
             ->replaceClass($stub, $name);
     }
 
@@ -254,13 +253,6 @@ class CrudApiControllerCommand extends GeneratorCommand
     protected function replacePaginationNumber(&$stub, $perPage)
     {
         $stub = str_replace('{{pagination}}', $perPage, $stub);
-
-        return $this;
-    }
-
-    protected function replaceWhereSnippet(&$stub, $whereSnippet)
-    {
-        $stub = str_replace('{{whereSnippet}}', $whereSnippet, $stub);
 
         return $this;
     }
