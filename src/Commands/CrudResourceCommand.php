@@ -124,7 +124,9 @@ class CrudResourceCommand extends GeneratorCommand
                 if (count($parts) != 3) {
                     continue;
                 }
-                $validationRules .= "\n\t\t\t\t\t\t'$parts[0]' => \$this->$parts[0],";
+                if ($parts[1] == 'belongsTo') {
+                  $validationRules .= "\n\t\t\t\t\t\t'$parts[0]' => \$this->$parts[0],";
+                }
 
             }
 

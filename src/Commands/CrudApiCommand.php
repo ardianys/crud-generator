@@ -121,6 +121,8 @@ class CrudApiCommand extends Command
             $spareParts = explode('#', trim($item));
             $filter_fields[] = $spareParts[0];
         }
+        $filter_fields[] = 'created_at';
+        $filter_fields[] = 'updated_at';
 
         $this->call('crud:policy',         ['name' => $modelName . 'Policy', '--crud-name' => $name, '--model-name' => $modelName, '--pagination' => $perPage, '--validations' => $validations]);
         $this->call('crud:test',           ['name' => $name . 'Test', '--schema' => $migrationFields,  '--crud-name' => $name, '--model-name' => $modelName, '--pagination' => $perPage, '--validations' => $validations]);

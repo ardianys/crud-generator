@@ -115,27 +115,6 @@ class CrudApiControllerCommand extends GeneratorCommand
             $validationRules .= "\n\t\t\t\t]);";
         }
 
-        $fieldsArray = explode(';', $fields);
-        $fileSnippet = '';
-        $whereSnippet = '';
-
-        if ($fields) {
-            $x = 0;
-            foreach ($fieldsArray as $index => $item) {
-                $itemArray = explode('#', $item);
-
-                if (trim($itemArray[1]) == 'file') {
-                    $fileSnippet .= str_replace('{{fieldName}}', trim($itemArray[0]), $snippet) . "\n";
-                }
-
-                $fieldName = trim($itemArray[0]);
-
-                $whereSnippet .= ($index == 0) ? "where('$fieldName', 'LIKE', \"%\$keyword%\")" . "\n                " : "->orWhere('$fieldName', 'LIKE', \"%\$keyword%\")" . "\n                ";
-            }
-
-            $whereSnippet .= "->";
-        }
-
         return $this->replaceNamespace($stub, $name)
             ->replaceCrudName($stub, $crudName)
             ->replaceCrudNameSingular($stub, $crudNameSingular)
@@ -144,7 +123,6 @@ class CrudApiControllerCommand extends GeneratorCommand
             ->replaceModelNamespaceSegments($stub, $modelNamespace)
             ->replaceValidationRules($stub, $validationRules)
             ->replacePaginationNumber($stub, $perPage)
-            ->replaceWhereSnippet($stub, $whereSnippet)
             ->replaceClass($stub, $name);
     }
 
