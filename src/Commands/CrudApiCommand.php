@@ -116,6 +116,12 @@ class CrudApiCommand extends Command
 
         $softDeletes = $this->option('soft-deletes');
 
+        $filter_fields = [];
+        foreach ($fieldsArray as $item) {
+            $spareParts = explode('#', trim($item));
+            $filter_fields[] = $spareParts[0];
+        }
+
         $this->call('crud:policy',         ['name' => $modelName . 'Policy', '--crud-name' => $name, '--model-name' => $modelName, '--pagination' => $perPage, '--validations' => $validations]);
         $this->call('crud:test',           ['name' => $name . 'Test', '--schema' => $migrationFields,  '--crud-name' => $name, '--model-name' => $modelName, '--pagination' => $perPage, '--validations' => $validations]);
         $this->call('crud:api-controller', ['name' => $controllerNamespace . $name . 'Controller', '--crud-name' => $name, '--fields' => $fields, '--model-name' => $modelName, '--model-namespace' => $modelNamespace, '--pagination' => $perPage, '--validations' => $validations]);
@@ -126,6 +132,7 @@ class CrudApiCommand extends Command
         $this->call('crud:csv',            ['name' => $migrationName, '--schema' => $migrationFields, '--pk' => $primaryKey, '--indexes' => $indexes, '--foreign-keys' => $foreignKeys, '--soft-deletes' => $softDeletes]);
         $this->call('crud:resource',       ['name' => $modelName . 'Resource', '--crud-name' => $name, '--model-name' => $modelName, '--relationships' => $relationships, '--model-namespace' => $modelNamespace, '--pagination' => $perPage, '--validations' => $validations]);
         $this->call('crud:collection',     ['name' => $modelName . 'Collection', '--crud-name' => $name, '--model-name' => $modelName,  '--relationships' => $relationships, '--model-namespace' => $modelNamespace, '--pagination' => $perPage, '--validations' => $validations]);
+        $this->call('eloquent-builder:make', ['model' => $modelName, 'name' => $filter_fields]);
 
         // For optimizing the class loader
         if (\App::VERSION() < '5.6') {

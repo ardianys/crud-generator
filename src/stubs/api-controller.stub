@@ -19,14 +19,11 @@ class DummyClass extends Controller
     public function index(Request $request)
     {
         $this->authorize('index', {{modelName}}::class);
-        $keyword = $request->get('search');
-        $perPage = {{pagination}};
+        $per_page = $request->per_page ?? 25;
 
-        if (!empty($keyword)) {
-            ${{crudName}} = {{modelName}}::{{whereSnippet}}latest()->paginate($perPage);
-        } else {
-            ${{crudName}} = {{modelName}}::latest()->paginate($perPage);
-        }
+        ${{crudName}} = \EloquentBuilder::to({{modelName}}::class, $request->search)
+            ->orderBy('id', 'asc')
+            ->paginate($per_page);
 
         return new {{modelName}}Collection(${{crudName}});
     }
